@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour {
@@ -8,15 +9,34 @@ public class Player : MonoBehaviour {
     [SerializeField] private GameInput gameInput;
 
     private bool isWalking;
+    private Vector3 lastInteractDirection; 
 
     private void Update() {
         HandleMovement();
+        HandleInteraction();
     }
 
     public bool IsWalking() { 
         return isWalking; 
     }
 
+    private void HandleInteraction() {
+        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector3 moveDirection = new Vector3(inputVector.x, 0f, inputVector.y);
+
+        float interactionDistance = 2f;
+
+        if (moveDirection != Vector3.zero) { 
+            lastInteractDirection = moveDirection;
+        }
+
+        if (Physics.Raycast(transform.position, lastInteractDirection, out RaycastHit raycastHit, interactionDistance)) {
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter)) { 
+                // Raycast is hitting a clear counter
+                clearCounter.Interact();
+            }
+        }
+    }
     private void HandleMovement() {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDirection = new Vector3(inputVector.x, 0f, inputVector.y);
