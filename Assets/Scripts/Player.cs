@@ -10,6 +10,14 @@ public class Player : MonoBehaviour {
     private bool isWalking;
 
     private void Update() {
+        HandleMovement();
+    }
+
+    public bool IsWalking() { 
+        return isWalking; 
+    }
+
+    private void HandleMovement() {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDirection = new Vector3(inputVector.x, 0f, inputVector.y);
 
@@ -38,7 +46,7 @@ public class Player : MonoBehaviour {
                 if (canMove) {
                     // Can move only on Z direction
                     moveDirection = moveDirectionZ;
-                } else { 
+                } else {
                     // Cant move in any direnction
                 }
             }
@@ -52,9 +60,5 @@ public class Player : MonoBehaviour {
 
         float rotateSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
-    }
-
-    public bool IsWalking() { 
-        return isWalking; 
     }
 }
